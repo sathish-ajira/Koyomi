@@ -26,10 +26,13 @@ extension UIColor {
         static let darkBlack: UIColor   = .init(hex: 0x1F1F21)
         static let lightGray: UIColor   = .init(hex: 0xDBDDDE)
         static let darkGray: UIColor    = .init(hex: 0x8E8E93)
+        static let darkBlue: UIColor = .init(hex: 0x002550)
         static let lightYellow: UIColor = .init(hex: 0xFFDB4C)
         static let lightPurple: UIColor = .init(hex: 0xC86EDF)
         static let lightGreen: UIColor  = .init(hex: 0xA4E786)
         static let lightPink: UIColor   = .init(hex: 0xFFD3E0)
+        static let lightBlue: UIColor = .init(hex: 0x335173)
+        static let selectedLightBlue: UIColor = .init(hex: 0x7d90a6)
         
         // Using [iOS Human Interface Guidelines] as reference.
         // https://developer.apple.com/ios/human-interface-guidelines/visual-design/color/

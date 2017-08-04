@@ -21,7 +21,7 @@ final class DateModel: NSObject {
     
     enum WeekType: String {
         case monday, tuesday, wednesday, thursday, friday, saturday, sunday
-
+        
         init?(_ indexPath: IndexPath) {
             let firstWeekday = Calendar.current.firstWeekday
             switch indexPath.row % 7 {
@@ -165,18 +165,18 @@ final class DateModel: NSObject {
                 sequenceDates.start = selectedDate
                 selectedDates[selectedDate] = true
                 
-            // user has selected sequence date
+                // user has selected sequence date
             } else if let _ = sequenceDates.start, let _ = sequenceDates.end {
                 sequenceDates.start = selectedDate
                 sequenceDates.end   = nil
                 selectedDates.forEach { selectedDates[$0.0] = selectedDate == $0.0 ? true : false }
                 
-            // user select selected date
+                // user select selected date
             } else if let start = sequenceDates.start , sequenceDates.end == nil && start == selectedDate {
                 sequenceDates.start = nil
                 selectedDates[selectedDate] = false
                 
-            // user has selected a date
+                // user has selected a date
             } else if let start = sequenceDates.start , sequenceDates.end == nil && start != selectedDate {
                 
                 let isSelectedBeforeDay = selectedDate < start
@@ -313,16 +313,16 @@ private extension DateModel {
         selectedDates = [:]
         
         guard let indexAtBeginning = indexAtBeginning(in: .current) else { return }
-
+        
         var components: DateComponents = .init()
         currentDates = (0..<DateModel.maxCellCount).flatMap { index in
-                components.day = index - indexAtBeginning
-                return calendar.date(byAdding: components, to: atBeginning(of: .current))
+            components.day = index - indexAtBeginning
+            return calendar.date(byAdding: components, to: atBeginning(of: .current))
             }
             .map { (date: Date) in
                 selectedDates[date] = false
                 return date
-            }
+        }
         
         let selectedDateKeys = selectedDates.keys(of: true)
         selectedDateKeys.forEach { selectedDates[$0] = true }

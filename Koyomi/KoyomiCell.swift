@@ -14,6 +14,9 @@ final class KoyomiCell: UICollectionViewCell {
     fileprivate let contentLabel: UILabel = .init()
     fileprivate let circularView: UIView  = .init()
     fileprivate let lineView: UIView      = .init()
+    fileprivate let frameView: UIView     = .init()
+    fileprivate let leftFrameview: UIView = .init()
+    fileprivate let rightFrameview: UIView = .init()
     
     fileprivate let leftSemicircleView: UIView  = .init()
     fileprivate let rightSemicircleView: UIView = .init()
@@ -21,9 +24,9 @@ final class KoyomiCell: UICollectionViewCell {
     static let identifier = "KoyomiCell"
     
     enum CellStyle {
-        case standard, circle, semicircleEdge(position: SequencePosition), line(position: SequencePosition?)
+        case standard, circle(position: SequencePosition), semicircleEdge(position: SequencePosition), line(position: SequencePosition?)
         
-        enum SequencePosition { case left, middle, right }
+        enum SequencePosition { case left, middle, right, single }
     }
     
     // Internal properties
@@ -50,7 +53,8 @@ final class KoyomiCell: UICollectionViewCell {
             configureLineView()
         }
     }
-    var circularViewDiameter: CGFloat = 0.75 {
+    
+    var circularViewDiameter: CGFloat = 0.50 {
         didSet {
             configureCircularView()
         }
@@ -80,7 +84,7 @@ final class KoyomiCell: UICollectionViewCell {
         adjustSubViewsFrame()
     }
     
-    func configureAppearanse(of style: CellStyle, withColor color: UIColor, backgroundColor: UIColor, isSelected: Bool) {
+    func configureAppearanse(of style: CellStyle, withColor color: UIColor, backgroundColor: UIColor, isSelected: Bool, selectedBackgroundColor: UIColor) {
         switch style {
         case .standard:
             self.backgroundColor = isSelected ? color : backgroundColor
@@ -89,21 +93,49 @@ final class KoyomiCell: UICollectionViewCell {
             lineView.isHidden = true
             rightSemicircleView.isHidden = true
             leftSemicircleView.isHidden  = true
+            frameView.isHidden = true
+            leftFrameview.isHidden = true
+            rightFrameview.isHidden = true
             
         // isSelected is always true
-        case .circle:
+        case .circle(let position):
             circularView.backgroundColor = color
             self.backgroundColor = backgroundColor
-            
-            circularView.isHidden  = false
             lineView.isHidden = true
             rightSemicircleView.isHidden = true
             leftSemicircleView.isHidden  = true
+            frameView.isHidden = true
+            leftFrameview.isHidden = true
+            rightFrameview.isHidden = true
+            
+            if case .middle = position {
+                circularView.isHidden  = true
+                leftFrameview.isHidden = true
+                rightFrameview.isHidden = true
+                frameView.isHidden = false
+                frameView.backgroundColor = selectedBackgroundColor
+            } else if case .single = position {
+                circularView.isHidden  = false
+                leftFrameview.isHidden = true
+                rightFrameview.isHidden = true
+                frameView.isHidden = true
+            } else if case .left = position{
+                rightFrameview.isHidden = false
+                rightFrameview.backgroundColor = selectedBackgroundColor
+                circularView.isHidden  = false
+            } else if case .right = position{
+                leftFrameview.isHidden = false
+                leftFrameview.backgroundColor = selectedBackgroundColor
+                circularView.isHidden  = false
+            }
             
         // isSelected is always true
         case .semicircleEdge(let position):
             lineView.isHidden = true
             circularView.isHidden = true
+            frameView.isHidden = true
+            leftFrameview.isHidden = true
+            rightFrameview.isHidden = true
             
             if case .left = position {
                 rightSemicircleView.isHidden = false
@@ -143,6 +175,9 @@ final class KoyomiCell: UICollectionViewCell {
             circularView.isHidden = true
             lineView.isHidden = false
             lineView.backgroundColor = color
+            frameView.isHidden = true
+            leftFrameview.isHidden = true
+            rightFrameview.isHidden = true
             
             // Config of lineView should end. (configureLineView())
             // position is only sequence style
@@ -157,6 +192,8 @@ final class KoyomiCell: UICollectionViewCell {
                 lineView.frame.size.width = bounds.width
                 lineView.frame.origin.x   = (bounds.width - lineView.frame.width) / 2
             case .right:
+                lineView.frame.origin.x = 0
+            case .single:
                 lineView.frame.origin.x = 0
             }
         }
@@ -192,6 +229,18 @@ private extension KoyomiCell {
     }
     
     func setup() {
+        configureFrameView()
+        frameView.isHidden = true
+        addSubview(frameView)
+        
+        configureRightFrameView()
+        rightFrameview.isHidden = true
+        addSubview(rightFrameview)
+        
+        configureLeftFrameView()
+        leftFrameview.isHidden = true
+        addSubview(leftFrameview)
+        
         circularView.isHidden = true
         addSubview(circularView)
         
@@ -217,12 +266,30 @@ private extension KoyomiCell {
         
         rightSemicircleView.frame = CGRect(x: bounds.width / 2, y: 0, width: bounds.width / 2, height: bounds.height)
         leftSemicircleView.frame  = CGRect(x: 0, y: 0, width: bounds.width / 2, height: bounds.height)
+        configureRightFrameView()
+        configureLeftFrameView()
+        configureFrameView()
     }
     
     func configureCircularView() {
-        let diameter = bounds.width * circularViewDiameter
+        let diameter = bounds.width * circularViewDiameter / 1.3
         circularView.frame = CGRect(x: (bounds.width - diameter) / 2, y: (bounds.height - diameter) / 2, width: diameter, height: diameter)
         circularView.layer.cornerRadius = diameter / 2
+    }
+    
+    func configureFrameView(){
+        let diameter = bounds.width * circularViewDiameter / 1.3
+        frameView.frame = CGRect(x: 0 , y: (bounds.height - diameter) / 2, width: bounds.width, height: diameter)
+    }
+    
+    func configureRightFrameView(){
+        let diameter = bounds.width * circularViewDiameter / 1.3
+        rightFrameview.frame = CGRect(x: bounds.width / 2 , y: (bounds.height - diameter) / 2, width: bounds.width / 2, height: diameter)
+    }
+    
+    func configureLeftFrameView(){
+        let diameter = bounds.width * circularViewDiameter / 1.3
+        leftFrameview.frame = CGRect(x: 0 , y: (bounds.height - diameter) / 2, width: bounds.width / 2, height: diameter)
     }
     
     func configureLineView() {
