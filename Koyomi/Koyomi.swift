@@ -317,6 +317,10 @@ final public class Koyomi: UICollectionView {
     public func currentMonth(withFormat format: String = "M") -> Int {
         return Int(model.dateString(in: .current, withFormat: format))!
     }
+
+    public func currentYear(withFormat format: String = "yyyy") -> Int {
+        return Int(model.dateString(in: .current, withFormat: format))!
+    }
     
     @discardableResult
     public func select(date: Date, to toDate: Date? = nil) -> Self {
